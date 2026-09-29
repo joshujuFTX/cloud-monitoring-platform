@@ -1,5 +1,8 @@
 from fastapi import FastAPI
 import psutil
+from app.healthchecks.checks import check_url
+from app.healthchecks.services import check_all_services
+from app.healthchecks.alerts import get_alerts
 
 app = FastAPI(
     title="Cloud Monitoring Platform",
@@ -53,3 +56,18 @@ def system_info():
         "processor": platform.processor(),
         "python_version": sys.version.split()[0],
     }
+
+
+@app.get("/alerts")
+def alerts():
+    return get_alerts()
+
+
+@app.get("/services")
+def services():
+    return check_all_services()
+
+
+@app.get("/check")
+def service_check(url: str):
+    return check_url(url)
